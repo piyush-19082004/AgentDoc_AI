@@ -1,0 +1,38 @@
+# Ignore everything by default.
+*
+
+# Keep the repository essentials.
+!.gitignore
+!.env.example
+!README.md
+!requirements.txt
+!setup.sh
+!app/
+!app/**
+
+# Never commit local secrets, environments, generated files, or caches.
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+env/
+ENV/
+outputs/
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+build/
+dist/
+*.egg-info/
+.DS_Store
+.idea/
+.vscode/
+*.log
+*.tmp
+*.bak
