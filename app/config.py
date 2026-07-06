@@ -24,16 +24,4 @@ MAX_EXECUTION_TIME = int(os.getenv("MAX_EXECUTION_TIME", 300))
 BASE_DIR = Path(__file__).parent.parent
 OUTPUT_DIR = Path(os.getenv("OUTPUT_DIR", BASE_DIR / "outputs"))
 
-try:
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-except OSError:
-    # Fallback for read-only deployment environments like Vercel
-    OUTPUT_DIR = Path(os.getenv("OUTPUT_DIR", "/tmp/outputs"))
-    try:
-        OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    except OSError:
-        import tempfile
-
-        OUTPUT_DIR = Path(tempfile.mkdtemp(prefix="agent_outputs_"))
-
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")

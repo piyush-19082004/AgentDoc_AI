@@ -157,12 +157,24 @@ class DocumentGenerator:
         self.add_footer()
         safe_name = sanitize_filename(filename)
         file_path = OUTPUT_DIR / f"{safe_name}.docx"
-        
+
+        try:
+            OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+        except OSError:
+            try:
+                alt_dir = Path(os.getenv("OUTPUT_DIR", "/tmp/outputs"))
+                alt_dir.mkdir(parents=True, exist_ok=True)
+                file_path = alt_dir / f"{safe_name}.docx"
+            except OSError:
+                import tempfile
+
+                temp_dir = Path(tempfile.mkdtemp(prefix="agent_outputs_"))
+                file_path = temp_dir / f"{safe_name}.docx"
+
         try:
             self.doc.save(str(file_path))
             logger.info(f"Document saved to {file_path}")
             return str(file_path)
-        
         except Exception as e:
             logger.error(f"Failed to save document: {e}")
             raise
