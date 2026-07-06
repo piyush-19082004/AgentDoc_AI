@@ -1,6 +1,7 @@
 """
 Document generator for creating professional DOCX files.
 """
+import os
 from pathlib import Path
 from typing import List, Optional
 from datetime import datetime
