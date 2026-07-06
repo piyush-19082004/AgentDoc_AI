@@ -25,7 +25,6 @@ class DocumentGenerator:
     
     def _setup_styles(self) -> None:
         """Configure document styles."""
-        # Set default font
         style = self.doc.styles['Normal']
         font = style.font
         font.name = 'Calibri'
@@ -35,8 +34,6 @@ class DocumentGenerator:
         """Add document title."""
         heading = self.doc.add_heading(title, level=0)
         heading.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        
-        # Format title
         for run in heading.runs:
             run.font.size = Pt(24)
             run.font.bold = True
@@ -54,13 +51,9 @@ class DocumentGenerator:
     def add_metadata(self, goal: str, assumptions: List[str]) -> None:
         """Add metadata section with goal and assumptions."""
         self.add_heading("Document Information", level=1)
-        
-        # Goal
         self.doc.add_paragraph("Goal:", style='List Bullet')
         goal_para = self.doc.add_paragraph(goal)
         goal_para.paragraph_format.left_indent = Inches(0.5)
-        
-        # Assumptions
         if assumptions:
             self.doc.add_heading("Key Assumptions", level=2)
             for i, assumption in enumerate(assumptions, 1):
@@ -69,8 +62,6 @@ class DocumentGenerator:
     def add_heading(self, text: str, level: int = 1) -> None:
         """Add section heading."""
         heading = self.doc.add_heading(text, level=level)
-        
-        # Color headings
         for run in heading.runs:
             if level == 1:
                 run.font.color.rgb = RGBColor(0, 51, 102)
@@ -129,13 +120,9 @@ class DocumentGenerator:
         """Add table to document."""
         table = self.doc.add_table(rows=len(rows) + 1, cols=len(headers))
         table.style = 'Light Grid Accent 1'
-        
-        # Add headers
         header_cells = table.rows[0].cells
         for i, header in enumerate(headers):
             header_cells[i].text = header
-        
-        # Add rows
         for row_idx, row_data in enumerate(rows, 1):
             row_cells = table.rows[row_idx].cells
             for col_idx, cell_data in enumerate(row_data):
@@ -167,10 +154,7 @@ class DocumentGenerator:
         Returns:
             Full path to saved file
         """
-        # Add footer
         self.add_footer()
-        
-        # Sanitize filename
         safe_name = sanitize_filename(filename)
         file_path = OUTPUT_DIR / f"{safe_name}.docx"
         
@@ -209,18 +193,12 @@ def create_document_from_content(
     logger.info(f"Creating document: {title}")
     
     generator = DocumentGenerator()
-    
-    # Add title and metadata
     generator.add_title(title)
     generator.add_subtitle(subtitle)
     generator.add_metadata(goal, assumptions)
-    
-    # Add main content
     generator.add_page_break()
     generator.add_heading("Content", level=1)
     generator.add_paragraph(content)
-    
-    # Save
     return generator.save(filename)
 
 

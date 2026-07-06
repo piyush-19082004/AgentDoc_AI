@@ -6,7 +6,6 @@ import logging
 from typing import Any, Dict, Optional
 from datetime import datetime
 
-# Configure logging
 def setup_logger(name: str) -> logging.Logger:
     """Set up a logger with consistent formatting."""
     logger = logging.getLogger(name)
@@ -39,7 +38,6 @@ def safe_json_parse(content: str, default: Optional[Dict] = None) -> Dict[str, A
         default = {}
     
     try:
-        # Try to extract JSON from markdown code blocks if present
         if "```json" in content:
             start = content.find("```json") + 7
             end = content.find("```", start)

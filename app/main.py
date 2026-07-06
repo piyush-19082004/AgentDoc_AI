@@ -9,11 +9,9 @@ from app.config import DEBUG, LOG_LEVEL
 from app.routes.agent import router as agent_router
 from app.utils import setup_logger
 
-# Setup logging
 logger = setup_logger(__name__)
 logging.getLogger().setLevel(LOG_LEVEL)
 
-# Create FastAPI app
 app = FastAPI(
     title="Autonomous AI Agent",
     description="An autonomous AI agent that plans, executes, and documents tasks",
@@ -21,7 +19,6 @@ app = FastAPI(
     debug=DEBUG,
 )
 
-# Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -30,7 +27,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include routes
 app.include_router(agent_router, tags=["Agent"])
 
 

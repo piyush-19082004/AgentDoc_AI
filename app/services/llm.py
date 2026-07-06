@@ -12,7 +12,7 @@ from app.utils import setup_logger, safe_json_parse, LLMError
 logger = setup_logger(__name__)
 
 
-class GeminiLLM:
+class GroqLLM:
     """Interface to Groq API."""
 
     def __init__(self, api_key: Optional[str] = None, model: Optional[str] = None):
@@ -136,6 +136,6 @@ class GeminiLLM:
             raise LLMError(error_msg) from e
 
 
-def get_llm() -> GeminiLLM:
+def get_llm() -> GroqLLM:
     """Factory function to get LLM instance."""
-    return GeminiLLM()
+    return GroqLLM()

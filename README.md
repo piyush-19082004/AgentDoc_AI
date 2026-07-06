@@ -338,11 +338,18 @@ This makes reasoning more reliable than independent parallel execution.
 - RAG support
 - Conversation memory
 - Human approval workflow
+<<<<<<< HEAD
 - Docker deployment
+=======
+>>>>>>> 84d13ab (Configure project for Vercel deployment)
 - Authentication
 - Background workers
 
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 84d13ab (Configure project for Vercel deployment)
 ---
 
 # Author
@@ -351,4 +358,8 @@ This makes reasoning more reliable than independent parallel execution.
 
 B.Tech Artificial Intelligence & Machine Learning
 
+<<<<<<< HEAD
 FastAPI • Python • LLMs • Autonomous AI Agents
+=======
+FastAPI • Python • LLMs • Autonomous AI Agents
+>>>>>>> 84d13ab (Configure project for Vercel deployment)

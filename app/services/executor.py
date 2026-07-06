@@ -66,7 +66,6 @@ class Executor:
                 logger.warning(f"Task {task.id} failed: {result.error}")
                 state.failed = True
                 state.error = result.error or "Task execution failed"
-                # Continue execution instead of stopping
         
         logger.info(f"Execution complete. {len(state.completed_tasks)} tasks processed")
         return state
@@ -97,14 +96,8 @@ class Executor:
                     output="",
                     error=f"Unknown tool: {task.tool}",
                 )
-            
-            # Build context with previous outputs
             context = self._build_task_context(task, state, plan)
-            
-            # Execute LLM task
             output = self._execute_llm_task(task, context)
-            
-            # Store output for downstream tasks
             state.store_output(task.id, output)
             
             return TaskResult(
@@ -134,8 +127,6 @@ class Executor:
         context = f"Overall Goal: {plan.goal}\n"
         context += f"Current Task: {task.title}\n"
         context += f"Task Description: {task.description or 'No description'}\n\n"
-        
-        # Include previous outputs
         if task.dependencies:
             context += "Previous Results:\n"
             for dep_id in task.dependencies:

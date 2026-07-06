@@ -1,7 +1,5 @@
-# Ignore everything by default.
 *
 
-# Keep the repository essentials.
 !.gitignore
 !.env.example
 !README.md
@@ -10,7 +8,6 @@
 !app/
 !app/**
 
-# Never commit local secrets, environments, generated files, or caches.
 .env
 .env.*
 !.env.example

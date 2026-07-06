@@ -34,7 +34,6 @@ class Planner:
         prompt = self._build_planning_prompt(request)
         
         try:
-            # Get JSON response from LLM
             plan_data = self.llm.generate_json(prompt, temperature=0.3)
 
             if plan_data is None:
@@ -42,8 +41,6 @@ class Planner:
 
             if not isinstance(plan_data, dict):
                 raise ValueError(f"Expected dict from generate_json(), got {type(plan_data).__name__}")
-            
-            # Validate and construct ExecutionPlan
             plan = self._validate_plan(plan_data)
             logger.info(f"Plan created with {len(plan.tasks)} tasks")
             
@@ -101,8 +98,6 @@ IMPORTANT:
             
             if not tasks_data:
                 raise ValueError("No tasks in plan")
-            
-            # Convert task dicts to TaskDefinition objects
             tasks = []
             for task_data in tasks_data:
                 task = TaskDefinition(
