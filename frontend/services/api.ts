@@ -1,19 +1,24 @@
-const base = process.env.NEXT_PUBLIC_API_URL?.replace(/\/+$/, '') || (() => {
-  if (typeof window === 'undefined') return ''
-  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-    return 'http://127.0.0.1:8000'
-  }
-  return ''
-})()
+const rawEnvBase = process.env.NEXT_PUBLIC_API_URL?.replace(/\/+$/, '')
+const envBase = rawEnvBase
+  ? rawEnvBase.endsWith('/api')
+    ? rawEnvBase
+    : `${rawEnvBase}/api`
+  : ''
+const base = envBase || (process.env.NODE_ENV === 'development' ? 'http://127.0.0.1:8000' : '/api')
 
 export async function postAgent(payload: { request: string }) {
-  const response = await fetch(`${base}/agent`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(payload),
-  })
+  let response
+  try {
+    response = await fetch(`${base}/agent`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    })
+  } catch (error: any) {
+    throw new Error(`Unable to connect to backend at ${base || '/agent'}: ${error?.message || 'Network error'}`)
+  }
 
   const text = await response.text().catch(() => '')
   let data: any = {}

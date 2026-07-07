@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { ArrowRight, Clock3, Trash2 } from 'lucide-react'
+import { getDownloadUrl } from '../../services/api'
 import { HistoryItem } from '../../types'
 
 function readHistory() {
@@ -84,7 +85,7 @@ export default function HistoryPage() {
                     </button>
                     {item.result.docx_file && (
                       <a
-                        href={item.result.download_url || `/download/${encodeURIComponent(item.result.docx_file.split('/').pop() ?? '')}`}
+                        href={getDownloadUrl(item.result) || `/download/${encodeURIComponent(item.result.docx_file.split('/').pop() ?? '')}`}
                         target="_blank"
                         rel="noreferrer"
                         className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-slate-200 transition hover:bg-white/10"

@@ -77,7 +77,7 @@ async def agent_endpoint(request: Request, payload: AgentRequest) -> AgentRespon
             if task.status == "completed"
         )
         total_count = len(execution_state.completed_tasks)
-        download_url = request.url_for('download_file', filename=Path(docx_path).name)
+        download_url = _build_download_url(request, Path(docx_path).name)
 
         response = AgentResponse(
             success=completed_count > 0,
@@ -119,6 +119,15 @@ async def agent_endpoint(request: Request, payload: AgentRequest) -> AgentRespon
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Internal server error: {str(e)}",
         )
+
+
+def _build_download_url(request: Request, filename: str) -> str:
+    """Build an absolute download URL for the generated DOCX file."""
+    try:
+        return request.url_for('download_file', filename=filename)
+    except Exception:
+        base_url = str(request.base_url).rstrip('/')
+        return f"{base_url}/download/{filename}"
 
 
 def _ensure_within_timeout(start_time: float) -> None:
