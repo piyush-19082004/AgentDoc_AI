@@ -4,7 +4,8 @@ const envBase = rawEnvBase
     ? rawEnvBase
     : `${rawEnvBase}/api`
   : ''
-const base = envBase || (process.env.NODE_ENV === 'development' ? 'http://127.0.0.1:8000' : '/api')
+const origin = typeof window !== 'undefined' ? window.location.origin : ''
+const base = envBase || (process.env.NODE_ENV === 'development' ? 'http://127.0.0.1:8000' : `${origin}/api`)
 
 export async function postAgent(payload: { request: string }) {
   let response
