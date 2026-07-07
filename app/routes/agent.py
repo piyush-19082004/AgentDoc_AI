@@ -1,10 +1,11 @@
 """
 Agent endpoint for autonomous AI agent.
 """
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, Request, status
 import logging
 import traceback
 import time
+from pathlib import Path
 
 from app.schemas import AgentRequest, AgentResponse, ExecutionPlan, TaskDefinition
 from app.services.planner import get_planner
@@ -19,14 +20,15 @@ router = APIRouter()
 
 
 @router.post("/agent", response_model=AgentResponse)
-async def agent_endpoint(request: AgentRequest) -> AgentResponse:
+async def agent_endpoint(request: Request, payload: AgentRequest) -> AgentResponse:
     """
     Autonomous AI agent endpoint.
     
     Accepts a request, plans tasks, executes them, and generates a document.
     
     Args:
-        request: AgentRequest with user's request
+        request: FastAPI request object
+        payload: AgentRequest with the user's prompt
         
     Returns:
         AgentResponse with execution results
@@ -35,20 +37,20 @@ async def agent_endpoint(request: AgentRequest) -> AgentResponse:
         HTTPException: On validation or execution errors
     """
     try:
-        if not request.request or not request.request.strip():
+        if not payload.request or not payload.request.strip():
             raise InvalidRequestError("Request cannot be empty")
         
-        logger.info(f"Processing agent request: {request.request[:100]}")
+        logger.info(f"Processing agent request: {payload.request[:100]}")
         start_time = time.time()
         planner = get_planner()
-        execution_plan = planner.create_plan(request.request)
+        execution_plan = planner.create_plan(payload.request)
         logger.info(f"Plan created with {len(execution_plan.tasks)} tasks")
         executor = get_executor()
         execution_state = executor.execute_plan(execution_plan)
         logger.info(f"Execution completed with {len(execution_state.completed_tasks)} tasks")
         _ensure_within_timeout(start_time)
         document_content = _generate_document_content(
-            request.request,
+            payload.request,
             execution_plan,
             execution_state,
         )
@@ -60,7 +62,7 @@ async def agent_endpoint(request: AgentRequest) -> AgentResponse:
                 document_content = improved
 
             _ensure_within_timeout(start_time)
-        title = f"Agent Report: {request.request[:50]}"
+        title = f"Agent Report: {payload.request[:50]}"
         filename = f"agent_report_{_generate_filename_timestamp()}"
         docx_path = create_document_from_content(
             title=title,
@@ -75,6 +77,7 @@ async def agent_endpoint(request: AgentRequest) -> AgentResponse:
             if task.status == "completed"
         )
         total_count = len(execution_state.completed_tasks)
+        download_url = request.url_for('download_file', filename=Path(docx_path).name)
 
         response = AgentResponse(
             success=completed_count > 0,
@@ -82,8 +85,9 @@ async def agent_endpoint(request: AgentRequest) -> AgentResponse:
             completed_tasks=execution_state.completed_tasks,
             assumptions=execution_plan.assumptions,
             docx_file=docx_path,
+            download_url=download_url,
             summary=(
-                _generate_summary(request.request, execution_plan, execution_state)
+                _generate_summary(payload.request, execution_plan, execution_state)
                 + (
                     " Completed with warnings due to one or more failed tasks."
                     if completed_count < total_count

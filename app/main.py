@@ -7,6 +7,9 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import DEBUG, LOG_LEVEL
 from app.routes.agent import router as agent_router
+from app.routes.download import router as download_router
+from app.config import BASE_DIR
+from fastapi.staticfiles import StaticFiles
 from app.utils import setup_logger
 
 logger = setup_logger(__name__)
@@ -28,6 +31,12 @@ app.add_middleware(
 )
 
 app.include_router(agent_router, tags=["Agent"])
+app.include_router(download_router, tags=["Downloads"])
+
+# Serve a minimal frontend from /static
+static_dir = BASE_DIR / "static"
+if static_dir.exists():
+    app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
 
 
 @app.get("/health")

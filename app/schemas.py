@@ -43,6 +43,7 @@ class AgentResponse(BaseModel):
     execution_plan: ExecutionPlan = Field(..., description="The generated execution plan")
     completed_tasks: List[TaskResult] = Field(..., description="Results from executed tasks")
     assumptions: List[str] = Field(..., description="Key assumptions about the request")
-    docx_file: str = Field(..., description="Path to the generated DOCX file")
+    docx_file: Optional[str] = Field(None, description="Path to the generated DOCX file")
+    download_url: Optional[str] = Field(None, description="Download URL for the generated DOCX file")
     summary: str = Field(..., description="Summary of what was accomplished")
     error: Optional[str] = Field(None, description="Error message if execution failed")

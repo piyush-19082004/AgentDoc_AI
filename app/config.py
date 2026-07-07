@@ -22,6 +22,6 @@ LLM_TIMEOUT = int(os.getenv("LLM_TIMEOUT", 30))
 MAX_EXECUTION_TIME = int(os.getenv("MAX_EXECUTION_TIME", 300))
 
 BASE_DIR = Path(__file__).parent.parent
-OUTPUT_DIR = Path(os.getenv("OUTPUT_DIR", BASE_DIR / "outputs"))
+OUTPUT_DIR = Path(os.getenv("OUTPUT_DIR", "/tmp/outputs"))
 
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
