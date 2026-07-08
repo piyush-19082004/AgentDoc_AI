@@ -4,7 +4,7 @@ const envBase = rawEnvBase
     ? rawEnvBase
     : `${rawEnvBase}/api`
   : ''
-const base = envBase || (process.env.NODE_ENV === 'development' ? 'http://127.0.0.1:8000' : '/api')
+const base = envBase || (process.env.NODE_ENV === 'development' ? 'http://127.0.0.1:8000/api' : '/api')
 
 export async function postAgent(payload: { request: string }) {
   let response
@@ -41,6 +41,9 @@ export function getDownloadUrl(result: any) {
   if (!result?.docx_file) return null
   const filename = result.docx_file.split('/').pop()
   if (!filename) return null
+  // If frontend runs in a different project, `base` should be set via
+  // NEXT_PUBLIC_API_URL to the backend base including /api. Otherwise default
+  // is to call the same origin under /api.
   return `${base}/download/${encodeURIComponent(filename)}`
 }
 

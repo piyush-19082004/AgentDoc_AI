@@ -125,7 +125,7 @@ async def agent_endpoint(request: Request, payload: AgentRequest) -> AgentRespon
 def _build_download_url(request: Request, filename: str) -> str:
     """Build an absolute download URL for the generated DOCX file."""
     try:
-        return request.url_for('download_file', filename=filename)
+        return str(request.url_for('download_file', filename=filename))
     except Exception:
         base_url = str(request.base_url).rstrip('/')
         return f"{base_url}/download/{filename}"

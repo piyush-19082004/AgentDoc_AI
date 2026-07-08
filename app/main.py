@@ -2,6 +2,7 @@
 Main FastAPI application entry point.
 """
 import logging
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -15,11 +16,17 @@ from app.utils import setup_logger
 logger = setup_logger(__name__)
 logging.getLogger().setLevel(LOG_LEVEL)
 
+# Allow configuring a root path so the app can run both mounted under `/api`
+# (as on Vercel) and as a standalone server locally. Set `API_ROOT_PATH=/api`
+# in your environment to mimic the production mounting.
+API_ROOT_PATH = os.getenv("API_ROOT_PATH", "") or ""
+
 app = FastAPI(
     title="Autonomous AI Agent",
     description="An autonomous AI agent that plans, executes, and documents tasks",
     version="1.0.0",
     debug=DEBUG,
+    root_path=API_ROOT_PATH,
 )
 
 app.add_middleware(
@@ -32,6 +39,10 @@ app.add_middleware(
 
 app.include_router(agent_router, tags=["Agent"])
 app.include_router(download_router, tags=["Downloads"])
+
+# Also support /api prefix for local development where uvicorn is accessed directly
+app.include_router(agent_router, prefix="/api", tags=["Agent"])
+app.include_router(download_router, prefix="/api", tags=["Downloads"])
 
 # Serve a minimal frontend from /static
 static_dir = BASE_DIR / "static"
